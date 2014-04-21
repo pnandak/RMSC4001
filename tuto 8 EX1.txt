@@ -1,0 +1,38 @@
+'tuto 8 EX1'
+function orginial()
+
+sum =0 'navie method'
+
+for i =1 to 1000
+	u =rnd()
+	x = -log(u)
+	if x>2 then
+		sum = sum +(x-2)
+	end if 
+next i 
+
+original = sum/1000
+
+
+function strat()
+
+sum =0
+for j  = 1 to 4
+for i  =1 to 250
+	u  =rnd()
+	uij = 0.25*u + 0,25*(j-1)
+	x = -log(uij*(exp(-2)))
+	sum = sum + (x-2)*exp(-2)
+next i 
+next j
+
+
+strat = sum/100
+
+end function
+
+
+
+
+
+

@@ -1,0 +1,61 @@
+sub BMsin()
+
+Dim npaths As integer
+Dim nSamples As integer
+
+npaths = 10  
+nSamples = 1000   'no. of samples in one path
+
+Dim t() as double   'to store time step
+Redim t( 0 to nSmaples)
+
+Dim j as integer
+for j  =0 to nSamples
+	t(j) = j/nSamples
+next j
+
+
+dim S() as double
+redim s(0 to npaths, 0 to nSamples) 'store npaths of simulated BM process
+
+dim epsilon as double
+dim i as integer
+for i =0 to npaths  'repeat npaths times
+	epsilon = normal()  'generate N(0,1)
+	S(j,0) = 0 'set starting point
+	For j = 1 to nSamples
+		epsilon = normal()
+		S(i,j)  = S(i,j-1) + (1/sqr(nSamples))*epsilon
+	next j 
+next i
+
+'S(npaths,nSamples)
+
+'plot on sheet
+Sheets("Sheet1").select
+cells.select
+selection.clearsheets
+if i <> 1 then
+	for i = 1 to npaths
+		For j = 0 to nSamples
+			cells(j+1,i) =  S(i,j)
+	next j
+next i
+else
+	for j = 0 to nSamples
+		cells(j+1,i) =S(1,j)
+	next j
+endif
+
+
+end sub
+
+
+
+
+
+
+
+
+
+

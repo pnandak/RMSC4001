@@ -1,0 +1,50 @@
+Sub QuickSort(ByRef a() As Double, ByVal l As Double, ByVal r As Double)
+    Dim M As Double, i As Double, j As Double, v As Double
+    M = 4
+
+    If ((r - l) > M) Then
+        i = (r + l) / 2
+        If (a(l) > a(i)) Then swap a, l, i
+        If (a(l) > a(r)) Then swap a, l, r
+        If (a(i) > a(r)) Then swap a, i, r
+
+        j = r - 1
+        swap a, i, j
+        i = l
+        v = a(j)
+        Do
+            Do: i = i + 1: Loop While (a(i) < v)
+            Do: j = j - 1: Loop While (a(j) > v)
+            If (j < i) Then Exit Do
+            swap a, i, j
+        Loop
+        swap a, i, r - 1
+        QuickSort a, l, j
+        QuickSort a, i + 1, r
+    End If
+End Sub
+
+Sub swap(ByRef a() As Double, ByVal i As Double, ByVal j As Double)
+    Dim T As Double
+    T = a(i)
+    a(i) = a(j)
+    a(j) = T
+End Sub
+
+Sub InsertionSort(ByRef a(), ByVal lo0 As Double, ByVal hi0 As Double)
+    Dim i As Double, j As Double, v As Double
+
+    For i = lo0 + 1 To hi0
+        v = a(i)
+        j = i
+        Do While j > lo0
+            If Not a(j - 1) > v Then Exit Do
+            a(j) = a(j - 1)
+            j = j - 1
+        Loop
+        a(j) = v
+    Next i
+End Sub
+
+Sub sort(ByRef a() As Double)
+    Quic

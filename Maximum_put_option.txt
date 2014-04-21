@@ -1,0 +1,73 @@
+Public Function normal()
+
+
+Dim v1 As Double, v2 As Double, r As Double
+10 v1 = 2 * Rnd - 1
+v2 = 2 * Rnd - 1
+r = v1 ^ 2 + v2 ^ 2
+If (r > 1) Then GoTo 10
+normal = v2 * Sqr(-2 * Log(r) / r)
+
+End Function
+
+
+Public Function max_put(S1_0, S2_0, r, T, K, sigma1, sigma2, cor, n)
+
+Dim S1_0 As Double, S2_0 As Double, r As Double, T As Double, K As Double
+Dim sigma1  As Double, sigma2 As Double, cor As Double
+
+'read in parameter
+Dim z1 As Double, z2 As Double
+Dim x1 As Double, x2 As Double
+Dim i As Long
+
+Dim S1() As Double
+ReDim S1(1 To n)
+Dim S2() As Double
+ReDim S2(1 To n)
+Dim payoff() As Double
+ReDim payoff(1 To n)
+
+
+Randomize
+For i = 1 To n
+    z1 = normal()
+    z2 = normal()
+    x1 = z1  '2 Wt
+    x2 = cor * z1 + Sqr(1 - cor ^ 2) * z2
+
+    S1(i) = S1_0 * Exp((r - 0.5 * sigma1 ^ 2) * T + sigma1 * Sqr(T) * x1)
+    S2(i) = S2_0 * Exp((r - 0.5 * sigma2 ^ 2) * T + sigma2 * Sqr(T) * x2)
+
+    payoff(i) = Application.WorksheetFunction.Max(K - Application.WorksheetFunction.Max(S1(i), S2(i)), 0)
+    
+Next i
+
+
+Dim average As Double
+average = 0
+For i = 1 To n
+    average = average + payoff(i) / n
+Next i
+
+max_put = average * Exp(-r * T)
+
+End Function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
