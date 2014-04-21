@@ -1,3 +1,4 @@
 RMSC4001
 ========
-VBA and R code for course RMSC4001 at CUHK
+VBA and R codes for course RMSC4001 at CUHK
+Based on textbook:
