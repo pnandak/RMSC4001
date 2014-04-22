@@ -1,0 +1,26 @@
+'tuto 8 EX2'
+function original()
+
+sum = 0
+for i =1 to 1000
+	u = rnd()
+	sum = sum + exp(u ^3)
+next i 
+original = sum/100
+end function
+
+
+function impo()
+
+sum =0
+
+for i = 1 to 1000
+	u = rnd()
+	x = log(1+u*(exp(1)-1))
+	sum = sum + exp(x ^3)*(exp(1)-1)/exp(x)
+next i 
+
+impo = sum/1000
+
+end function
+

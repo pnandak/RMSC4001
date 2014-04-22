@@ -1,0 +1,88 @@
+Function american_put(S, K, r, sigma, T, N)
+Dim ertn, q, deltat, u, d, i As Integer, j As Integer, a, b
+Dim st(), payoff()
+
+deltat = T / N
+ertn = Exp(-r * deltat)
+u = Exp(sigma * Sqr(deltat))
+d = 1 / u
+q = (1 / ertn - d) / (u - d)
+
+ReDim st(0 To N, 0 To N)
+ReDim payoff(0 To N, 0 To N)
+st(0, 0) = S
+For i = 1 To N
+For j = 0 To (i - 1)
+st(i, j) = st(i - 1, j) * u
+Next j
+st(i, j) = st(i - 1, j - 1) * d
+Next i
+
+For i = 0 To N
+payoff(N, i) = Application.Max(K - st(N, i), 0)
+Next i
+
+For i = N - 1 To 0 Step -1
+For j = 0 To i
+payoff(i, j) = ertn * (payoff(i + 1, j) * q + payoff(i + 1, j + 1) * (1 - q))
+payoff(i, j) = Application.Max(payoff(i, j), K - st(i, j))
+Next j
+Next i
+
+american_put = payoff(0, 0)
+
+End Function
+Function normal()
+          Dim fac As Double, r As Double, V1 As Double, V2 As Double
+          Randomize
+10          V1 = 2 * Rnd - 1
+          V2 = 2 * Rnd - 1
+          r = V1 ^ 2 + V2 ^ 2
+          If (r >= 1) Then GoTo 10
+          fac = Sqr(-2 * Log(r) / r)
+          normal = V2 * fac
+End Function
+Sub sim()
+
+Dim S As Double
+Dim r As Double
+Dim sigma As Double
+Dim K As Double
+Dim T As Double
+Dim N As Long
+
+S = Cells(1, 2).Value
+r = Cells(2, 2).Value
+sigma = Cells(3, 2).Value
+K = Cells(4, 2).Value
+T = Cells(5, 2).Value
+N = Cells(6, 2).Value
+
+Dim i As Long, j As Long
+Dim st()
+ReDim st(1 To N)
+Dim nn()
+ReDim nn(1 To N)
+
+For j = 1 To 100
+For i = 1 To N / 2
+    nn(2 * i) = normal()
+    nn(2 * i - 1) = -1 * nn(2 * i)
+Next i
+
+
+For i = 1 To N
+    st(i) = S * Exp((r - 0.5 * sigma * sigma) * T + sigma * Sqr(T) * nn(i))
+Next i
+
+
+Dim payoff As Double
+payoff = 0
+
+For i = 1 To N
+    payoff = payoff + Application.Max(st(i) * Exp(r * (1 - T)) - K, 0) / N
+Next i
+
+Cells(7 + j, 2) = payoff * Exp(-r * T)
+Next j
+End Sub

@@ -1,0 +1,79 @@
+Sub build_bin_tree()
+
+Dim S0 As Double
+Dim K As Double
+Dim r As Double
+Dim sigma As Double
+Dim T As Double
+Dim n As Integer
+Dim CP As String
+
+' Read in the parameters from the spreadsheet
+S0 = Cells(1, 2).Value          ' current asset price
+K = Cells(2, 2).Value           ' strike price
+r = Cells(1, 4).Value           ' continuously compounding risk-free interest rate
+sigma = Cells(2, 4).Value       ' annualized asset volatility
+T = Cells(1, 6).Value           ' Time to expiration
+n = Cells(2, 6).Value           ' number of periods
+CP = Cells(1, 8)                ' type of option: call or put
+
+Dim dt As Double
+Dim u As Double
+Dim d As Double
+Dim q As Double
+
+'calculate other useful values
+dt = T / n                      ' length of one time interval
+u = Exp(sigma * Sqr(dt))        ' upward movement factor in asset price over interval dt
+d = 1 / u                       ' downward movement factor in asset price over interval dt
+q = (Exp(r * dt) - d) / (u - d) ' risk-neutral probability
+
+Cells(4, 2) = u
+Cells(4, 4) = d
+Cells(4, 6) = q
+
+Dim S() As Double               ' declare an array to store asset prices at different time
+ReDim S(n + 1, 0 To n)
+Dim f() As Double               ' declare an array to store option prices at different time
+ReDim f(n + 1, 0 To n)
+Dim i As Integer
+Dim j As Integer
+
+S(1, 0) = S0
+For i = 1 To n
+    For j = i - 1 To n - 1
+        S(i, j + 1) = S(i, j) * u   ' calculate asset price at different time
+    Next j
+    S(i + 1, i) = S(i, i - 1) * d
+Next i
+
+' calculate the option pay-off on maturity
+For i = 1 To n + 1
+    If CP = "c" Then
+        f(i, n) = Application.WorksheetFunction.Max(S(i, n) - K, 0)     ' call option pay-off
+    Else
+        f(i, n) = Application.WorksheetFunction.Max(K - S(i, n), 0)     ' put option pay-off
+    End If
+Next i
+
+' calculate option pay-off at different time
+For j = n - 1 To 0 Step -1
+    For i = 1 To j + 1
+        f(i, j) = (q * f(i, j + 1) + (1 - q) * f(i + 1, j + 1)) * Exp(-r * dt)
+    Next i
+Next j
+
+' clear the previous contents
+Rows("5:65536").Select
+Selection.ClearContents
+Cells(6 + 2 * n, 1).Select
+
+' form the binomial tree
+For j = n To 0 Step -1
+    For i = 1 To j + 1
+        Cells(4 * i + (n - j + 1) * 2, j + 1) = S(i, j)
+        Cells(4 * i + (n - j + 1) * 2 + 1, j + 1) = f(i, j)
+    Next i
+Next j
+
+End Sub
