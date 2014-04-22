@@ -49,26 +49,3 @@ d2 = d1 - sigma*sqrt(t)
 (C = S0*dnorm(d1)-K*exp(-r*t)*dnorm(d2)) #3.1187
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
