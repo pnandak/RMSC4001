@@ -1,0 +1,92 @@
+Public Function arithm()
+
+
+S01 = 100
+S02 = 100
+n = 1000
+T = 1 / 12
+r = 0.02
+sigma1 = 0.3
+sigma2 = 0.5
+cor = 0.35
+K = 10
+
+nu1 = r - sigma1 ^ 2 / 2
+nu2 = r - sigma2 ^ 2 / 2
+
+Dim S1() As Double, S2() As Double, A1() As Double, A2() As Double
+ReDim S1(1 To n, 4 To 12)
+ReDim S2(1 To n, 4 To 12)
+ReDim A1(1 To n)
+ReDim A2(1 To n)
+Dim p() As Double
+ReDim p(1 To n)
+
+Dim i As Long, j As Long
+For i = 1 To n
+    S1(i, 4) = S01
+    S2(i, 4) = S02
+    A1(i) = 12.8
+    A2(i) = 13
+Next i
+
+
+mean1 = 0
+mean2 = 0
+
+For j = 5 To 12
+
+    mean1 = 0
+    mean2 = 0
+    
+    For i = 1 To n
+        v1 = rnorm()
+        v2 = rnorm()
+        u1 = v1
+        u2 = cor * v1 + Sqr(1 - cor ^ 2) * v2
+        
+        S1(i, j) = S1(i, j - 1) * Exp(nu1 * T + sigma1 * Sqr(T) * u1)
+        S2(i, j) = S2(i, j - 1) * Exp(nu2 * T + sigma2 * Sqr(T) * u2)
+        mean1 = mean1 + S1(i, j) / n 'compute mean for each j row from 5 to 12
+        mean2 = mean2 + S2(i, j) / n
+      
+    Next i
+        
+    m1 = S01 * Exp(nu1 * (j - 4) * T)
+    m2 = S02 * Exp(nu2 * (j - 4) * T)
+    For i = 1 To n 'adjust mean
+        S1(i, j) = S1(i, j) * m1 / mean1
+        S2(i, j) = S2(i, j) * m2 / mean2
+        A1(i) = A1(i) + j * S1(i, j) / 78
+        A2(i) = A2(i) + j * S2(i, j) / 78
+        
+        p(i) = Exp(-r * T) * Application.WorksheetFunction.Max(A1(i) - A2(i) - K, 0)
+    Next i
+Next j
+
+'arithm = Application.WorksheetFunction.Average(p)
+'arithm = A1(10)
+    
+Dim Y() As Double, X() As Double
+ReDim Y(1 To n, 1 To 1)
+ReDim X(1 To n, 1 To 2)
+
+
+For i = 1 To n
+    Y(i, 1) = p(i)
+    X(i, 1) = A1(i)
+    X(i, 2) = A2(i)
+Next i
+
+Dim Beta As Variant
+Beta = Application.WorksheetFunction.LinEst(Y, X, True, False)
+
+mean1 = Application.WorksheetFunction.Average(A1)
+mean2 = Application.WorksheetFunction.Average(A2)
+
+arithm = Beta(3) + Beta(2) * mean1 + Beta(1) * mean2
+
+
+        
+
+End Function

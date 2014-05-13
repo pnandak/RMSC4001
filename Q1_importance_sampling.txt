@@ -1,0 +1,30 @@
+Public Function call_importance()
+
+Dim n As Integer, T As Double
+n = 10000
+T = 1
+S0 = 10
+K = 9
+sigma = 0.3
+r = 0.05
+nu = r - 0.5 * sigma ^ 2
+theta = Sqr(2) / 2
+
+Dim S() As Double, payoff() As Double
+ReDim S(1 To n)
+ReDim payoff(1 To n)
+
+For i = 1 To n
+    u = laplace(theta)
+    'v = rnorm()
+    f = Exp(-u ^ 2 / 2) / Sqr(2 * 3.1415926)
+    g = Exp(-Abs(u) / theta) / (2 * theta)
+    S(i) = S0 * Exp(nu * T + sigma * Sqr(T) * u)
+    'S(i) = S0 * Exp(nu * T + sigma * Sqr(T) * v)
+    payoff(i) = Exp(-r * T) * Application.WorksheetFunction.Max(S(i) - K, 0) * f / g
+Next i
+
+call_importance = Application.WorksheetFunction.Average(payoff)
+
+
+End Function

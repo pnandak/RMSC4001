@@ -1,0 +1,23 @@
+Public Function laplace(theta)
+
+u = Rnd
+If u <= 0.5 Then
+    laplace = theta * Log(2 * u)
+Else
+    laplace = -theta * Log(2 - 2 * u)
+End If
+
+End Function
+
+Public Function rnorm()
+
+Do
+    v1 = 2 * Rnd - 1
+    v2 = 2 * Rnd - 1
+    r = v1 ^ 2 + v2 ^ 2
+Loop Until (r < 1)
+
+rnorm = v1 * Sqr(-2 * Log(r) / r)
+
+
+End Function
