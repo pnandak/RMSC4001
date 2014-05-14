@@ -54,15 +54,21 @@ For j = 5 To 12
         
     m1 = S01 * Exp(nu1 * (j - 4) * T)
     m2 = S02 * Exp(nu2 * (j - 4) * T)
+    
     For i = 1 To n 'adjust mean
+
         S1(i, j) = S1(i, j) * m1 / mean1
         S2(i, j) = S2(i, j) * m2 / mean2
         A1(i) = A1(i) + j * S1(i, j) / 78
         A2(i) = A2(i) + j * S2(i, j) / 78
-        
-        p(i) = Exp(-r * T) * Application.WorksheetFunction.Max(A1(i) - A2(i) - K, 0)
+         
     Next i
 Next j
+
+for i = 1 to n
+    p(i) = Exp(-r * T) * Application.WorksheetFunction.Max(A1(i) - A2(i) - K, 0)
+next i
+
 
 'arithm = Application.WorksheetFunction.Average(p)
 'arithm = A1(10)
